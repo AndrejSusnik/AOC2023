@@ -4,22 +4,28 @@ import numpy as np
 
 lines = list(map(lambda x: (x.strip().split(' ')[0], tuple(map(int, x.strip().split(' ')[1].split(',')))), open('input').readlines()))
 
-def get_groups(line: str) -> np.ndarray[int]:
-    groups = groupby(line)
-    return np.array([sum(1 for _ in group) for label, group in groups if label not in ['.', '?']])
+@cache
+def get_number_of_arrangements1(line: str, group: list[int]):
+    line = line.lstrip('.')
 
-def get_number_of_arrangements(line: tuple[str, tuple[int]]) -> int:
-    cons = get_groups(line[0])
-    if '?' in line[0]:
-        idx = line[0].index('?')
+    if not line:
+        return not group
+    elif not group:
+        return '#' not in line
+    if line[0] == '?':
+        return get_number_of_arrangements1('.' + line[1:], group) + get_number_of_arrangements1('#' + line[1:], group)
 
-        return get_number_of_arrangements((line[0][: idx] + '.' + line[0][idx + 1:], line[1])) + get_number_of_arrangements((line[0][:idx] + '#' + line[0][idx + 1:], line[1]))
+    current_group = group[0]
+    if len(line) < current_group or "." in line[:current_group] or (len(line) > current_group and line[current_group] == "#"):
+        return 0
 
-    else:
-        if np.array_equal(cons, line[1]):
-            return 1
-        else:
-            return 0
+    return get_number_of_arrangements1(line[current_group + 1:], group[1:])
 
+print(sum(map(lambda x: get_number_of_arrangements1(*x), lines)))
 
-print(sum(map(get_number_of_arrangements, lines)))
+acc = 0
+for line in lines:
+    lin, group = line
+    lin, group = ("?".join([lin] * 5), group*5)
+    acc += get_number_of_arrangements1(lin, group)
+print(acc)

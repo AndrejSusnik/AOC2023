@@ -1,4 +1,4 @@
-import numpy as np
+    import numpy as np
 
 if __name__ == "__main__":
     grid = np.array([np.array([*line.strip()]) for line in open('input').readlines()])
