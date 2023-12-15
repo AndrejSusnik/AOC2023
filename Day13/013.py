@@ -28,3 +28,8 @@ def find_horizontal_symetry(grid: np.ndarray[np.ndarray[str]]):
 
 if __name__ == "__main__":
     print(sum(map(lambda x: 100 * find_horizontal_symetry(x) + find_vertical_symetry(x), list(map(lambda x: np.array(list(map(lambda y: np.array([*y]), x.strip().split('\n')))), open('input').read().split("\n\n"))))))
+
+import numpy as np
+
+images = [np.array([[c == "#" for c in line] for line in im.splitlines()])
+                   for im in open("input.txt").read().split("\n\n")]
